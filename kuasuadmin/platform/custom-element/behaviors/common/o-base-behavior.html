@@ -1,0 +1,133 @@
+<!--
+@author Jarek.li
+BaseBehavior提供了构建组件的最基本属性和样式
+-->
+<script>
+//    Polymer.BaseBehaviorImpl = {
+//
+//    };
+    /**
+     * `Polymer.O2BaseBehavior`
+     *
+     * @demo demo/base-behavior-index.html
+     * @polymerBehavior Polymer.OBaseBehavior
+     */
+    OBaseBehavior = {
+        properties: {
+            /**
+             * Returns 项目根目录
+             *
+             * @attribute webRoot
+             * @type String
+             */
+            webRoot:{
+                type:String,
+                value:window.webRoot,
+                readyOnly:true
+            },
+            /**
+             * Returns 当前版本号
+             * @attribute version
+             * @type Number
+             */
+            version:{
+                type:Number,
+                value:window.version,
+                readyOnly:true
+            },
+            /**
+             * Returns 默认分页对象
+             * @attribute pagingQueryCondition
+             * @type Object
+             */
+            pagingQueryCondition:{
+                type:Object,
+                value:{
+                    start: 0,
+                    limit: 20,
+                    results: 0,
+                    pageIndex: 0
+                }
+            },
+            /**
+             * Returns 当前组件需要编辑或者插入的对象
+             * @attribute entity
+             * @type Object
+             */
+            entity:{
+                type:Object,
+                value:{}
+            }
+        },
+        /**
+         * 获取项目跟路径
+         * @returns {*}
+         */
+        getRoot:function(){
+            return window.webRoot;
+        },
+        /**
+         * 获取Iframe高度
+         * @returns {number}
+         */
+        getIframeHeight:function(){
+            var frameBody = document.body;
+            var frame = $('.uc-tabbar-iframe')[0];
+            if(frame){
+                frameBody = frame.contentWindow.document.body;
+            }
+            console.info(frameBody.clientHeight)
+            return frameBody.clientHeight;
+        },
+        /**
+         * 获取当前窗口高度
+         * @returns {Number|Function|jQuery.innerHeight|HTMLElement|number}
+         */
+        getWinHeight:function() {
+            var de = document.documentElement;
+            return this.innerHeight||(de && de.clientHeight)||document.body.clientHeight;
+        },
+        /**
+         * 获取当前窗口宽度
+         * @returns {Number|Function|jQuery.innerWidth|HTMLElement|number}
+         */
+        getWinWidth:function(){
+            var de = document.documentElement;
+            return this.innerWidth||(de && de.clientWidth)||document.body.clientWidth;
+        },
+        /**
+         * 获取当前标签的Y坐标
+         * @param selector 标签选择器
+         * @returns {number}
+         */
+        getY: function (selector) {
+            var element = $(selector)[0];
+            var y = 0;
+            for (var e = element; e; e = e.offsetParent) {
+                y += e.offsetTop;
+            }//此时y为包含scrollHeight
+            for (e = element.parentNode; e && e != document.body; e = e.parentNode) {
+                if (e.scrollTop)
+                    y -= e.scrollTop;
+            }
+            return y;//返回不包含scrollHeight的y
+        },
+        /**
+         * 获取当前标签X坐标
+         * @param selector 标签选择器
+         * @returns {number}
+         */
+        getX: function (selector) {
+            var element = $(selector)[0];
+            var x = 0;
+            for (var e = element; e; e = e.offsetParent) {
+                x += e.offsetLeft;
+            }//此时y为包含scrollWidth
+            for (e = element.parentNode; e && e != document.body; e = e.parentNode) {
+                if (e.scrollLeft)
+                    x -= e.scrollLeft;
+            }
+            return x;//返回包含scrollWidth的y
+        }
+    };
+</script>

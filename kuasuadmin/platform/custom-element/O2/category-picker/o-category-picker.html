@@ -1,0 +1,119 @@
+<link rel="import" href="../../behaviors/o-resource.html" />
+<dom-module id="o-category-picker">
+	<style>
+		:host {} :host .h-category-pop-box {
+			z-index: 9999;
+			/*这个数值要足够大，才能够显示在最上层*/
+			
+			margin-bottom: 3px;
+			display: none;
+			position: absolute;
+			background: #FFF;
+			border: solid 1px #6e8bde;
+			border-radius: 5px;
+			width: 300px;
+			height: 400px;
+		}
+		:host .grid-header {
+			--header-height: 30px;
+			--header-line-height: 30px;
+		}
+		:host .grid-row {
+			--row-height: 30px;
+			--row-line-height: 30px;
+		}
+		:host .grid-cell {
+			--cell-height: 30px;
+			--cell-line-height: 30px;
+			--cell-width:60px;
+		}
+	</style>
+	<template>
+		<input is="iron-input" bind-value="{{category}}" id="inputCategory">
+		<div class="h-category-pop-box">
+			<h-simple-grid page-show="0">
+				<h-simple-grid-header class='grid-header'>
+					<h-simple-grid-header-cell class='grid-cell'>名字</h-simple-grid-header-cell>
+					<h-simple-grid-header-cell class='grid-cell'>中名字</h-simple-grid-header-cell>
+					<h-simple-grid-header-cell class='grid-cell'>英文名字</h-simple-grid-header-cell>
+					<h-simple-grid-header-cell class='grid-cell'>用途</h-simple-grid-header-cell>
+				</h-simple-grid-header>
+				<h-simple-grid-body>
+					<h-simple-grid-row class='grid-row' id="categoryItem">
+						<h-simple-grid-row-cell class='grid-cell'>名字</h-simple-grid-row-cell>
+						<h-simple-grid-row-cell class='grid-cell'>中名字</h-simple-grid-row-cell>
+						<h-simple-grid-row-cell class='grid-cell'>英文名字</h-simple-grid-row-cell>
+						<h-simple-grid-row-cell class='grid-cell'>用途</h-simple-grid-row-cell>
+					</h-simple-grid-row>
+				</h-simple-grid-body>
+			</h-simple-grid>
+		</div>
+	</template>
+	<script>
+		Polymer({
+			is: "o-category-picker",
+			properties: {
+				category: {
+					type: String,
+					notify: true,
+					observer: "_categoryChange"
+				}
+			},
+			listeners: {
+				'inputCategory.tap': 'inputCategoryClick',
+				'categoryItem.tap':'categoryItemClick'
+			},
+			inputCategoryClick: function(e) {
+				console.log("inputCategoryClick");
+				this._popupDiv();
+			},
+			categoryItemClick:function(e){
+				console.log("categoryItemClick");
+				this._hideDiv();
+			},
+			_categoryChange: function(newCategory, oldCategory) {
+				console.log("newCategory:" + newCategory + " oldCategory:" + oldCategory);
+			},
+			/**
+			 * 打开选择框
+			 */
+			_popupDiv: function() {
+				var inputCategory = this.$.inputCategory;
+				var top = 5;
+				var left = 0;
+				var div_obj = $(document.getElementsByClassName("h-category-pop-box")[0]);
+				div_obj.css({
+					"position": "relative"
+				}).animate({
+					left: left,
+					top: top,
+					opacity: "show"
+				}, "slow");
+			},
+			/**
+			 * 隐藏选择框
+			 */
+			_hideDiv: function() {
+				var div_obj = $(document.getElementsByClassName("h-category-pop-box")[0]);
+				div_obj.animate({
+					left: 0,
+					top: 0,
+					opacity: "hide"
+				}, "slow");
+			},
+			ready: function() {
+				var self = this;
+				//给document.body绑定一个click事件用来关闭选择面板，并阻止时间冒泡。
+				$(document.body).on("click", function(e) {
+					console.log("document.body.click");
+					var warp = e.target;
+					var inputCategory = self.$.inputCategory;
+					if (warp!=inputCategory) {
+						self._hideDiv();
+						e.stopPropagation();
+					}
+				})
+			}
+		})
+	</script>
+</dom-module>

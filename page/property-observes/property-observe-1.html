@@ -1,0 +1,34 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<dom-module id='observer-1'>
+	<style>
+	
+	</style>
+	<template>
+		<div>{{disabled}}</div>
+		<div>{{highlight}}</div>
+	</template>
+	<script>
+		Polymer({
+			is: 'observer-1',
+			properties: {
+				disabled: {
+					type: Boolean,
+					observer: '_disabledChanged'
+				},
+				highlight: {
+					observer: '_highlightChanged'
+				}
+			},
+			_disabledChanged: function(newValue, oldValue) {
+				this.toggleClass('disabled', newValue);
+				this.highlight = true;
+			},
+			_highlightChanged: function() {
+				this.classList.add('highlight');
+				this.async(function() {
+					this.classList.remove('highlight');
+				}, 300);
+			}
+		})
+	</script>
+</dom-module>

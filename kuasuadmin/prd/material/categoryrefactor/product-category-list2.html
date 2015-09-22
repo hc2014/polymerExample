@@ -1,0 +1,87 @@
+<dom-module is="product-category-list">
+	<style>
+		:host table {
+			border: 1px #c0c0c0 solid;
+			text-align: center;
+			margin-left: auto;
+			margin-right: auto;
+			width: 100%;
+			float: none;
+		}
+		:host table td {
+			border: 1px #c0c0c0 solid;
+			padding: 0px 10px 0px 10px;
+			height: 45px;
+		}
+		:host table th {
+			border: 1px #c0c0c0 solid;
+			padding: 0px 10px 0px 10px;
+			height: 45px;
+		}
+	</style>
+	<template>
+		<div id='product-category-div-2'>
+			<table id="category-table">
+				<thead>
+					<tr>
+						<th>名字</th>
+						<th>年龄</th>
+						<th>性别</th>
+						<th>爱好</th>
+					</tr>
+				</thead>
+				<tbody>
+					<template is="dom-repeat" items="{{currentEntities}}">
+						<tr>
+							<td>{{item.name}}</td>
+							<td>{{item.age}}</td>
+							<td>{{item.sex}}</td>
+							<td>{{item.interest}}</td>
+						</tr>
+					</template>
+				</tbody>
+			</table>
+			<button on-click="testOne">测试</button><span>{{peration}}</span>
+		</div>
+	</template>
+
+</dom-module>
+<script>
+	Polymer({
+		is: "product-category-list",
+		properties: {
+			currentEntities: {
+				type: Array
+//				value: [{
+//					name: "Jarek.li",
+//					age: 25,
+//					sex: 'M',
+//					interest: '看书，睡觉，下厨'
+//				}, {
+//					name: "JK",
+//					age: 25,
+//					sex: 'M',
+//					interest: 'LOL,Coding'
+//				}, {
+//					name: "Wang",
+//					age: 45,
+//					sex: 'M',
+//					interest: '看书，跑步，工作'
+//				}],
+//				notify: true
+			},
+			peration: {
+				type: String,
+				vaule: 'BaGa'
+			}
+		},
+		ready: function() {
+			console.log(this.peration);
+			console.log("ready: product-category-list2");
+		},
+		testOne: function() {
+			debugger;
+			console.log(this.peration);
+		}
+	})
+</script>

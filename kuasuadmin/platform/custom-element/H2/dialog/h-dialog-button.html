@@ -1,0 +1,62 @@
+<link rel="import" href="../../behaviors/o-resource.html" />
+<dom-module id="h-dialog-button">
+	<style>
+		:host paper-button[raised].colorful {
+			background: #4285f4;
+			color: #fff;
+		}
+	</style>
+	<template>
+		<paper-button tabindex="0" raised class="colorful" on-click="openDialog">
+			<span>{{lable}}</span>
+		</paper-button>
+	</template>
+</dom-module>
+
+<script>
+	Polymer({
+		is: 'h-dialog-button',
+		properties: {
+			label:String,
+			contentElement:String,
+			entity:{
+				type:Object,
+				value:{}
+			}
+		},
+		openDialog:function(){
+			//创建dialog
+			var dialog = document.createElement("h-dialog");
+			//获取dialog容器
+			//var dialogContanier = 
+			//创建内容标签
+			var contElement = document.createElement(this.contentElement);
+			//绑定编辑对象初始值
+			if(this.entity.length){
+				contElement.set("entity",this.entity);
+			}
+			//添加到容器里面
+			Polymer.dom(dialog).appendChild(contElement);
+			//dialogContanier.appendChild(contElement);
+			//绑定dialog到当前对象
+			Polymer.dom(this.root).appendChild(dialog);
+			if(dialog){
+				dialog.open();
+			}
+		}
+	});
+</script>
+
+<!--
+ *<edit-product-category is-change="{{isChange}}" operate-type="add"></edit-product-category>
+ *	<h-dialog-button label="Add" content-element="edit-product-category"
+ *		bind-root="{{self)}}
+ *		binds="isChange<->actionList.1.isChange,....."
+ *		>
+ *	
+ *	1. var content = document.createElement("edit-product-category")
+ *	2. 	content.set('isChange', bindRoot.get('actionList.1.isChange')
+ *	3. create dialog, dialog.append(content)
+ *	4. open dialog
+ *	5. dialog.addEventListener('dialog', onComplete => close dialog, bindRoot.set('actionList.1.isChange', content.get('isChange')
+ * -->

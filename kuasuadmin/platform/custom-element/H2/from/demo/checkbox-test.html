@@ -1,0 +1,46 @@
+<link rel="import" href="../h-form-checkbox.html" />
+<dom-module id="checkbox-test">
+	<!--/**
+	 * 样式表
+	 */-->
+	<style>
+		:host {
+			display: block;
+		}
+	</style>
+
+	<!--/**
+	 * 组件的Local MOM
+	 */-->
+	<template>
+		<h-form-checkbox label="应用类型" checkbox-items="[[checkboxItems]]" selected-value="{{selectedValue}}"></h-form-checkbox>
+	</template>
+</dom-module>
+
+<script>
+	(function() {
+		Polymer({
+			is: 'checkbox-test',
+			properties: {
+				checkboxItems: {
+					type: Array,
+					value: [{
+						name: '薄膜',
+						value: 1
+					}, {
+						name: '纤维',
+						value: 2
+					}, {
+						name: '管材 ',
+						value: 3
+					}]
+				},
+				selectedValue:{
+					type:String,
+					value:"1,2,3"
+				}
+			}
+
+		});
+	})();
+</script>

@@ -1,0 +1,33 @@
+<!--
+	加载资源文件
+-->
+<link rel="import" href="../../behaviors/o-resource.html" />
+<!--
+	这里的id和下面的is属性的值要保持一致，最好也和html文件的名字保持一直。
+	表示的是html标签的名字。
+-->
+<dom-module id="h-testchart">
+	<!--/**
+	 * 样式表
+	 */-->
+	<style>
+		:host iron-autogrow-textarea {
+			width: var(--h-textarea-width,400px);
+			height: var(--h-textarea-height,70px);
+		}
+	</style>
+	<!--/**
+	 * 组件的Local MOM
+	 */-->
+	<template>
+		<div id="h-from-textarea-container">
+			<span>李晶莹</span>
+		</div>
+	</template>
+</dom-module>
+
+<script>
+	Polymer({
+		is: 'h-testchart'
+	});
+</script>

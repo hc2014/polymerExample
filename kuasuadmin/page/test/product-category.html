@@ -1,0 +1,193 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html" />
+<dom-module id="product-category">
+
+	<style is='custom-style'>
+		/* CSS rules for your element */
+		:host {
+			
+		}
+		:host #animated {
+				width: 70%;
+				height: 50%;
+		}
+		:host table {
+			border: 1px #c0c0c0 solid;
+			text-align: center;
+			margin-left: auto;
+			margin-right: auto;
+			width: 100%;
+			float: none;
+		}
+		:host table td {
+			border: 1px #c0c0c0 solid;
+			padding: 0px 10px 0px 10px;
+			height: 45px;
+		}
+		:host table th {
+			border: 1px #c0c0c0 solid;
+			padding: 0px 10px 0px 10px;
+			height: 45px;
+		}
+	</style>
+
+	<template>
+		<div id='product-category-div-2'>
+			<table id="category-table">
+				<thead>
+					<tr>
+						<th>产品品种</th>
+						<th>英文名</th>
+						<th>中文名</th>
+						<th>应用类型</th>
+					</tr>
+				</thead>
+				<tbody>
+					<template is="dom-repeat" items="{{currentEntities}}">
+						<tr>
+							<td>{{identify(item.categoryName)}}</td>
+							<td>{{item.categoryEnName}}</td>
+							<td>{{item.categoryCnName}}</td>
+							<td>{{item.categoryApp}}</td>
+						</tr>
+					</template>
+				</tbody>
+			</table>
+		</div>
+		<button on-click="add">新增</button>
+		<button on-click="remove">删除</button>
+		<button on-click="update">修改</button>
+		<button on-click="updateAttribute">修改属性</button>
+		<button on-click="updateCategoryName">修改名字</button>
+		<button on-click="updateCategoryApp">修改应用类型</button>
+	</template>	
+
+</dom-module>
+
+<script>
+	 // element registration
+	Polymer({
+		is: "product-category",
+		properties: {
+			
+			currentEntities: {
+				type: Array,
+				value: [{
+					index:0,
+					categoryName: 'PE',
+					categoryEnName: 'PE',
+					categoryCnName: '聚乙烯',
+					categoryApp: '薄膜'
+				}, {
+					index:1,
+					categoryName: 'PC',
+					categoryEnName: 'PC',
+					categoryCnName: '聚碳酸酯',
+					categoryApp: '注塑'
+				}, {
+					index:2,
+					categoryName: 'PP',
+					categoryEnName: 'PP',
+					categoryCnName: '聚丙烯',
+					categoryApp: '薄膜, 涂覆, 中空, 管材, 注塑'
+				}],
+				notify: true
+			}
+		},
+		identify: function(x){ 
+			//每次categoryName更新都会执行这个方法，polymer只会关注这一个字段的值。其它值的改变不会影响他。
+			//这个和angular不一样，angular每次只要有数据更新，不管是什么他都会对全部数据做一次dirty-check，以确保能够页面没有绑定脏数据.
+			//这种定向指定的更新数据路径的做法是的polymer的效率大大的提高了
+			debugger;
+			console.log(x);
+			return x;
+		},
+		add:function(){
+			debugger;
+			this.push("currentEntities", {index: 3, categoryName: "PB", categoryEnName: "PB", categoryCnName: "PB", categoryApp: "PB"})
+		},
+		remove:function(){
+			debugger;
+			this.pop("currentEntities");
+		},
+		update:function(){
+			debugger;
+			this.set("currentEntities.0",{index: 0, categoryName: "PH", categoryEnName: "PH", categoryCnName: "PH", categoryApp: "PH"})
+		},
+		updateAttribute:function(){
+			debugger;
+			/*
+			 * 这种写法虽然内存里面的数据改变了，但是polymer并不知道。
+			 * */
+			var a = this.currentEntities;
+			a[0].categoryName='FFFFF';
+			console.log(this.currentEntities[0].categoryName);
+			
+			
+			
+//			this.set("currentEntities.0.categoryName","HHHHH");
+		},
+		updateCategoryName:function(){
+			debugger;
+			var self = this;
+			this.currentEntities.forEach(function(e,index){
+				//这种定向指定的更新数据路径的做法是的polymer的效率大大的提高了
+				self.set("currentEntities."+index+".categoryName","HHHHH");
+			})
+			
+		},
+		updateCategoryApp:function(){
+			debugger;
+			var self = this;
+			this.currentEntities.forEach(function(e,index){
+				//这种定向指定的更新数据路径的做法是的polymer的效率大大的提高了
+				self.set("currentEntities."+index+".categoryApp","GGGGG");
+			})
+			
+		}
+	});
+</script>
+
+
+<!--
+* <category-app>
+  * property: queryCondition
+  * property: pagedata
+  * property: currentEnity
+  * method: processQueryResult(pageData) { ... }
+  * method: addNew() {  var dialog = new KsDialog()；dialog.onAccept = function(){...}  dialog.onDicline=function(){... } var content = new CategoryEditForm();  dialog.show(content);   } // showElementDialog('category-edit-form')
+  
+  * form
+    * <category-input>
+    * button.queryBtn onclick="$('category-service').query(this.queryCondition).success(this.processQueryResult)">
+    * button.addNew onclick=""
+  * <category-grid data="this.data">
+    * mm-grid
+      * editButton onclick="this.editCurrent();"
+    * <ks-pagination>
+      
+      
+  * <category-service> 
+  * <ks-dialog title=".." on-accept="..." on-decline="...">  -- utility-dialog、xp-dialog
+      
+      var content = new CategoryEditForm();
+      $(dialog).show(); 
+      // 
+  * <category-edit-form entity="json object">
+    * button.saveButton onclick="$('category-service').save(enity).success()" 
+    * button.cancelButton onclick="this.fireEvent('dismiss')"
+
+* 首先开发一个框架，组件一块可以模拟化，演示出上述的概念，然后再逐步求精。
+
+	
+var x = document.querySelector("product-category");
+var y = x.currentEntities;
+
+y[0].categoryApp = 'AAA';
+
+var z = [];
+for(i in y) z.push(y[i]);
+z.splice.apply(z, z);
+ {index: 1, categoryName: "PC", categoryEnName: "PC", categoryCnName: "聚碳酸酯", categoryApp: "注塑"}
+	
+	
+-->

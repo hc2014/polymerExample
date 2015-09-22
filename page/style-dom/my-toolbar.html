@@ -1,0 +1,27 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<dom-module id="my-toolbar">
+
+  <style>
+    :host {
+      padding: 4px;
+      background-color: gray;
+    }
+    .titleName {
+      color: var(--my-toolbar-titleName-color);
+    }
+  </style>
+  
+  <template>
+    <span class="titleName">{{titleName}}</span>
+  </template>
+  
+  <script>
+    Polymer({
+      is: 'my-toolbar',
+      properties: {
+        titleNameName: String
+      },
+    });
+  </script>
+
+</dom-module>

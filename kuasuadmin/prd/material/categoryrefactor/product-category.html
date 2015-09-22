@@ -1,0 +1,275 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html" />
+<link rel="import" href="../../../bower_components/iron-input/iron-input.html" />
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html" />
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="../../../bower_components/paper-styles/demo-pages.html">
+<link rel="import" href="../../../bower_components/paper-dialog/paper-dialog.html" />
+<link rel="import" href="../../../bower_components/neon-animation/neon-animations.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../../bower_components/paper-tabs/paper-tab.html">
+
+<link rel="import" href="../../../bower_components/iron-ajax/iron-ajax.html">
+
+<link rel="import" href="product-category-list1.html" />
+<link rel="import" href="product-category-list2.html" />
+<link rel="import" href="edit-product-category.html" />
+<link rel="import" href="../../../platform/custom-element/dialog/pe-dialog.html" />
+
+<link rel="import" href="../../../platform/custom-element/grid/pe-simple-grid.html"/>
+<link rel="import" href="../../../platform/custom-element/grid/pe-simple-grid-body.html"/>
+<link rel="import" href="../../../platform/custom-element/grid/pe-simple-grid-header.html"/>
+<link rel="import" href="../../../platform/custom-element/grid/pe-simple-grid-header-cell.html"/>
+<link rel="import" href="../../../platform/custom-element/grid/pe-simple-grid-row.html"/>
+<link rel="import" href="../../../platform/custom-element/grid/pe-simple-grid-row-cell.html"/>
+
+<dom-module id="product-category-app">
+
+	<style is='custom-style'>
+		/* CSS rules for your element */
+		
+		:host {
+			font-family: sans-serif;
+			margin: 0;
+			padding: 24px;
+			color: #333;
+		}
+
+	</style>
+
+	<template>
+		<!-- local DOM for your element -->
+		<div id='product-category-div-1'>
+			品种：
+			<input is="iron-input" bind-value="{{queryCondition.category}}" />
+			<button on-click="queryProductCategory">
+				<iron-icon icon="check"></iron-icon>查询</button>
+			<button on-click="resetQueryCondition">
+				<iron-icon icon="clear"></iron-icon>重置</button>
+			<button on-click="openAddDialog">
+				<iron-icon icon="add"></iron-icon>新增</button>
+		</div>
+		<div id='product-category-div-2'>
+			<pe-simple-grid paging="{{queryCondition}}" on-selectpage="onSelectPage">
+				<pe-simple-grid-header>
+					<pe-simple-grid-header-cell >
+						产品品种
+					</pe-simple-grid-header-cell>
+					<pe-simple-grid-header-cell >
+						英文名
+					</pe-simple-grid-header-cell>
+					<pe-simple-grid-header-cell >
+						中文名
+					</pe-simple-grid-header-cell>
+					<pe-simple-grid-header-cell >
+						应用类型
+					</pe-simple-grid-header-cell>
+					<pe-simple-grid-header-cell >
+						精品
+					</pe-simple-grid-header-cell>
+					<pe-simple-grid-header-cell >
+						操作
+					</pe-simple-grid-header-cell>
+				</pe-simple-grid-header>
+				<pe-simple-grid-body>
+					<template is="dom-repeat" items="{{entities}}">
+						<pe-simple-grid-row>
+							<pe-simple-grid-row-cell  >{{item.category}}</pe-simple-grid-row-cell>
+							<pe-simple-grid-row-cell  >{{item.nameEn}}</pe-simple-grid-row-cell>
+							<pe-simple-grid-row-cell  >{{item.nameCn}}</pe-simple-grid-row-cell>
+							<pe-simple-grid-row-cell  >{{item.applications}}</pe-simple-grid-row-cell>
+							<pe-simple-grid-row-cell  >
+								精品
+							</pe-simple-grid-row-cell>
+							<pe-simple-grid-row-cell  style="width: 100px">
+								<button on-click="openEditDialog" data-item="{{item}}">编辑</button>
+							</pe-simple-grid-row-cell>
+						</pe-simple-grid-row>
+					</template>
+
+				</pe-simple-grid-body>
+			</pe-simple-grid>
+		</div>
+
+		<pe-dialog id="category-add" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+			<edit-product-category is-change="{{isChange}}" operate-type="add"></edit-product-category>
+		</pe-dialog>
+		<pe-dialog id="category-edit" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+			<edit-product-category is-change="{{isChange}}" operate-type="edit" entity="{{editEntity}}"></edit-product-category>
+		</pe-dialog>
+	</template>
+
+</dom-module>
+
+<script>
+	// element registration
+	Polymer({
+		is: "product-category-app",
+		properties: {
+			queryCondition: {
+				type: Object,
+				value: {
+					showQueryCondition:true,
+					limit:15,
+					start:0,
+					pageIndex:1,
+					results:0
+				},
+				notify: true
+			},
+			currentEntity: {
+				type: Object
+			},
+			entities: {
+				type: Array,
+				notify: true
+			},
+			insertEntity: {
+				type: Object,
+				value: {}
+			},
+			editEntity: {
+				type: Object,
+				value: {
+					onselect:function() {
+						console.log();
+					}
+				}
+			},
+			isChange:{
+				type:Boolean,
+				value:false,
+				observer:"_isChangeCallBack"
+			}
+		},
+
+		//查询方法
+		queryProductCategory: function() {
+			var self = this;
+			$.ajax({
+				type: "GET",
+				url: "http://localhost:8080/pdm/categories.do",
+				data:self.queryCondition,
+				dataType: "json",
+				success:function(data){
+					console.log(data);
+					self.set("entities",data.rows);
+					self.set("queryCondition.results",data.results);
+				}
+			});
+		},
+		queryByName: function(categoryName) {
+			var self = this;
+			var result = {};
+			self.categoryList.forEach(function(category) {
+				if (category.categoryName == categoryName) {
+					result = category;
+					return;
+				}
+			});
+			return result;
+		},
+		//重置查询条件
+		resetQueryCondition: function() {
+			this.queryCondition = {
+				type: Object,
+				value: {},
+				notify: true
+			};
+		},
+		//打开编辑窗口
+		openEditDialog: function(e) {
+			var self = this;
+			var dialog = document.getElementById('category-edit');
+			if (dialog) {
+				dialog.open();
+			};
+			var item = e.target.dataItem;
+			self.set('editEntity', item);
+		},
+		//打开添加窗口
+		openAddDialog: function() {
+			var self = this;
+			var dialog = document.getElementById('category-add');
+			dialog.addEventListener('dialog-add', function() {
+				console.log('dialog-add event.....');
+				dialog.close();
+			}, false);
+			if (dialog) {
+				dialog.open();
+			}
+		},
+		arrayItem: function(change, index, path) {
+			return this.get(path, change.base[index]);
+		},
+		onSelectPage:function(evt){
+			console.info("page = " + evt.detail.page);
+			this.queryProductCategory();
+
+		},
+		ready:function(){
+			this.queryProductCategory();
+		},
+		getEditActionList:function(){
+			var value = [{
+				name:'edit',
+				text:'编辑',
+				callFunction:'edit'
+			}];
+			return value;
+		},
+		getAddActionList: function () {
+			var value = [{
+				name:'add',
+				text:'添加',
+				callFunction:'add'
+			}];
+			return value;
+		},
+		_isChangeCallBack:function(newValue,oldValue){
+			console.log(newValue,oldValue);
+			if(newValue){
+				console.log("this change");
+				this.queryProductCategory();
+			}
+		}
+	});
+</script>
+
+<!--
+* <category-app>
+  * property: queryCondition
+  * property: pagedata
+  * property: currentEnity
+  * method: processQueryResult(pageData) { ... }
+  * method: addNew() {  var dialog = new KsDialog()；dialog.onAccept = function(){...}  dialog.onDicline=function(){... } var content = new CategoryEditForm();  dialog.show(content);   } // showElementDialog('category-edit-form')
+  
+  * form
+    * <category-input>
+    * button.queryBtn onclick="$('category-service').query(this.queryCondition).success(this.processQueryResult)">
+    * button.addNew onclick=""
+  * <category-grid data="this.data">
+    * mm-grid
+      * editButton onclick="this.editCurrent();"
+    * <ks-pagination>
+      
+      
+  * <category-service> 
+  * <ks-dialog title=".." on-accept="..." on-decline="...">  -- utility-dialog、xp-dialog
+      
+      var content = new CategoryEditForm();
+      $(dialog).show(); 
+      // 
+  * <category-edit-form entity="json object">
+    * button.saveButton onclick="$('category-service').save(enity).success()" 
+    * button.cancelButton onclick="this.fireEvent('dismiss')"
+
+* 首先开发一个框架，组件一块可以模拟化，演示出上述的概念，然后再逐步求精。
+
+	
+	
+	
+	
+-->

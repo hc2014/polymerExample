@@ -1,0 +1,31 @@
+<link rel="import" href="my-toolbar.html">
+<dom-module id="my-element">
+
+  <style>
+
+    /* Make all toolbar titles in this host green by default */
+    :host {
+      --my-toolbar-titleName-color: green;
+    }
+
+    /* Make only toolbars with the .warning class red */
+    .warning {
+      --my-toolbar-titleName-color: red;
+    }
+
+  </style>
+  
+  <template>
+  
+    <my-toolbar title-name="This one is green."></my-toolbar><br>
+    <my-toolbar title-name="This one is green too."></my-toolbar><br>
+
+    <my-toolbar class="warning" title-name="This one is red."></my-toolbar>
+  
+  </template>
+
+  <script>
+    Polymer({ is: 'my-element'});
+  </script>
+
+</dom-module>

@@ -1,0 +1,117 @@
+<dom-module id='edit-product-category'>
+	<style>
+		:host paper-button{
+			background-color: var(--google-grey-300);
+			}
+		:host paper-button:hover {
+			background-color: var(--paper-light-blue-200);
+	    }
+	</style>
+	<template>
+		<div>
+			<!-- <category-edit-form></category-edit-form> <-->
+			<div>新增产品分类</div>
+			品种：
+			<input is="iron-input" bind-value="{{entity.category}}" /> 英文名：
+			<input is="iron-input" bind-value="{{entity.nameEn}}" />
+			<br /> 中文名：
+			<input is="iron-input" bind-value="{{entity.nameCn}}" /> 应用类型：
+			<input is="iron-input" bind-value="{{entity.applications}}" />
+			<br />
+			<div class="buttons">
+				<template is="dom-if" if="[[showOperate(operateType,'add')]]">
+					<paper-button on-click="add"><iron-icon icon="add"></iron-icon>添加</paper-button>
+				</template>
+				<template is="dom-if" if="[[showOperate(operateType,'edit')]]">
+					<paper-button on-click="edit"><iron-icon icon="edit"></iron-icon>编辑</paper-button>
+				</template>
+				<paper-button dialog-dismiss><iron-icon icon="cancel"></iron-icon>取消</paper-button>
+			</div>
+		</div>
+	</template>
+	<script>
+		Polymer({
+			is:'edit-product-category',
+			properties:{
+				entity:{
+					type:Object,
+					value:{},
+					observer:"_test"
+				},
+				operateType:{
+					type:String
+				},
+				isChange:{
+					type:Boolean,
+					notify:true
+				}
+			},
+			_test:function(){
+				console.log(123);
+			},
+			//编辑方法
+			edit:function(event, detail, sender){
+				//do something update datebase
+				debugger;
+//				http://localhost:8080/pdm/categories/update.do
+				var self = this;
+				$.ajax({
+					type: "PUT",
+					url: "http://localhost:8080/pdm/categories/update.do",
+					data:self.entity,
+					dataType: "json",
+					success:function(data){
+						self.set("isChange",true);
+						//通知父组件有更新
+						console.log("isChange:"+self.isChange);
+						self.cancel();
+						alert("更新成功");
+					},
+					error:function(messge){
+						alert("更新失败："+messge.responseText);
+					}
+				});
+			},
+			//添加方法
+			add:function(event, detail, sender){
+				var self = this;
+				var param = this.entity ;
+				param.kuaisuFavor=1;
+				param.remark="test";
+				param.description="这是新产品";
+				$.ajax({
+					type: "POST",
+					url: "http://localhost:8080/pdm/categories/add.do",
+					data:param,
+					dataType: "json",
+					success:function(data){
+						self.set("isChange",true);
+						//通知父组件有更新
+						console.log("isChange:"+self.isChange);
+						self.cancel();
+						alert("添加成功");
+					},
+					error:function(messge){
+						alert("添加失败："+messge.responseText);
+					}
+				});
+			},
+			//关闭窗口
+			cancel:function(){
+				var dialog = document.querySelector("pe-dialog");
+				//清除数据
+				this.set("entity",{});
+				if (dialog) {
+					dialog.close();
+				}
+			},
+			arrayItem: function(change, index, path) {
+		        return this.get(path, change.base[index]);
+      		},
+			showOperate:function(operateType,targetOperate){
+				return operateType==targetOperate;
+			}
+		})
+	</script>
+
+</dom-module>

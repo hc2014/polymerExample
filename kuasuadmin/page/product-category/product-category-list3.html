@@ -1,0 +1,306 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html" />
+<link rel="import" href="../../bower_components/iron-input/iron-input.html" />
+<link rel="import" href="../../bower_components/paper-button/paper-button.html" />
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="../../bower_components/paper-styles/demo-pages.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html" />
+<link rel="import" href="../../bower_components/neon-animation/neon-animations.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+
+<link rel="import" href="edit-product-category.html" />
+<link rel="import" href="simple-dialog.html" />
+<dom-module id="product-category-app">
+
+	<style is='custom-style'>
+		/* CSS rules for your element */
+		
+		:host {
+			font-family: sans-serif;
+			margin: 0;
+			padding: 24px;
+			color: #333;
+		}
+		:host simple-dialog {
+			width: 70%;
+			height: 50%;
+		}
+		:host table {
+			border: 1px #c0c0c0 solid;
+			text-align: center;
+			margin-left: auto;
+			margin-right: auto;
+			width: 100%;
+			float: none;
+		}
+		:host table td {
+			border: 1px #c0c0c0 solid;
+			padding: 0px 10px 0px 10px;
+			height: 45px;
+		}
+		:host table th {
+			border: 1px #c0c0c0 solid;
+			padding: 0px 10px 0px 10px;
+			height: 45px;
+		}
+		:host paper-tabs,paper-toolbar {
+			background-color: #00bcd4;
+			color: #fff;
+			box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+		}
+		:host paper-toolbar paper-tabs {
+			box-shadow: none;
+		}
+		:host paper-tabs[noink][no-bar] paper-tab.iron-selected {
+			color: #ffff8d;
+		}
+		:host paper-tabs[alignBottom] {
+			box-shadow: 0px -2px 6px rgba(0, 0, 0, 0.15);
+		}
+	</style>
+
+	<template>
+		<!-- local DOM for your element -->
+		<div id='product-category-div-1'>
+			品种：
+			<input is="iron-input" bind-value="{{queryCondition.categoryName}}" />
+			<button on-click="queryProductCategory">
+				<iron-icon icon="check"></iron-icon>查询</button>
+			<button on-click="resetQueryCondtion">
+				<iron-icon icon="clear"></iron-icon>重置</button>
+			<button on-click="openAddDialog">
+				<iron-icon icon="add"></iron-icon>新增</button>
+		</div>
+		<div id='product-category-div-2'>
+			<table id="category-table">
+				<thead>
+					<tr>
+						<th>产品品种</th>
+						<th>英文名</th>
+						<th>中文名</th>
+						<th>应用类型</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					<template is="dom-repeat" items="{{currentEntities}}">
+						<tr>
+							<td>{{identify(item.categoryName)}}</td>
+							<td>{{item.categoryEnName}}</td>
+							<td>{{item.categoryCnName}}</td>
+							<td>{{item.categoryApp}}</td>
+							<td>
+								<button on-click="openEditDialog" data-idx="{{index}}">编辑</button>
+							</td>
+						</tr>
+					</template>
+				</tbody>
+			</table>
+		</div>
+
+		<h2>Current Tab: <span>[[selected]]</span></h2>
+		<paper-tabs id="scrollableTabs" selected="{{selected}}" scrollable>
+			<paper-tab>NUMBER ONE ITEM</paper-tab>
+			<paper-tab>ITEM TWO</paper-tab>
+			<paper-tab>THE THIRD ITEM</paper-tab>
+			<paper-tab>THE ITEM FOUR</paper-tab>
+			<paper-tab>FIFTH</paper-tab>
+			<paper-tab>THE SIXTH TAB</paper-tab>
+			<paper-tab>NUMBER SEVEN</paper-tab>
+			<paper-tab>EIGHT</paper-tab>
+			<paper-tab>NUMBER NINE</paper-tab>
+			<paper-tab>THE TENTH</paper-tab>
+			<paper-tab>THE ITEM ELEVEN</paper-tab>
+			<paper-tab>TWELFTH ITEM</paper-tab>
+		</paper-tabs>
+
+		<simple-dialog id="category-add" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+			<edit-product-category operation-type="add"></edit-product-category>
+		</simple-dialog>
+		<simple-dialog id="category-eidt" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+			<edit-product-category operation-type="edit" edit-entity="{{editEntity}}"></edit-product-category>
+		</simple-dialog>
+		
+		<template is="dom-if" if="{{selected=1}}">
+			
+		</template>
+		
+	</template>
+
+</dom-module>
+
+<script>
+	// element registration
+	Polymer({
+		is: "product-category-app",
+		properties: {
+			queryCondition: {
+				type: Object,
+				value: {},
+				notify: true
+			},
+			currentEntity: {
+				type: Object
+			},
+			currentEntities: {
+				type: Array,
+				value: [{
+					index: 0,
+					categoryName: 'PE',
+					categoryEnName: 'PE',
+					categoryCnName: '聚乙烯',
+					categoryApp: '薄膜'
+				}, {
+					index: 1,
+					categoryName: 'PC',
+					categoryEnName: 'PC',
+					categoryCnName: '聚碳酸酯',
+					categoryApp: '注塑'
+				}, {
+					index: 2,
+					categoryName: 'PP',
+					categoryEnName: 'PP',
+					categoryCnName: '聚丙烯',
+					categoryApp: '薄膜, 涂覆, 中空, 管材, 注塑'
+				}],
+				notify: true
+			},
+			insertEntity: {
+				type: Object,
+				value: {}
+			},
+			editEntity: {
+				type: Object,
+				value: {}
+			},
+			selected:{
+				type:String,
+				value:'0'
+			}
+		},
+		categoryList: [{
+			index: 0,
+			categoryName: 'PE',
+			categoryEnName: 'PE',
+			categoryCnName: '聚乙烯',
+			categoryApp: '薄膜'
+		}, {
+			index: 1,
+			categoryName: 'PC',
+			categoryEnName: 'PC',
+			categoryCnName: '聚碳酸酯',
+			categoryApp: '注塑'
+		}, {
+			index: 2,
+			categoryName: 'PP',
+			categoryEnName: 'PP',
+			categoryCnName: '聚丙烯',
+			categoryApp: '薄膜, 涂覆, 中空, 管材, 注塑'
+		}],
+		identify: function(x) {
+			return x;
+		},
+		//查询方法
+		queryProductCategory: function() {
+			var self = this;
+			self.set('currentEntities', []);
+			console.log('queryProductCategory called');
+			if (self.queryCondition.categoryName) {
+				self.categoryList.forEach(function(category) {
+					if (category.categoryName == self.queryCondition.categoryName) {
+						self.push('currentEntities', category);
+					}
+				});
+			} else {
+				self.set('currentEntities', self.categoryList);
+			}
+			console.log(self.currentEntities);
+		},
+		queryByName: function(categoryName) {
+			var self = this;
+			var result = {};
+			self.categoryList.forEach(function(category) {
+				if (category.categoryName == categoryName) {
+					result = category;
+					return;
+				}
+			});
+			return result;
+		},
+		//重置查询条件
+		resetQueryCondtion: function() {
+			this.queryCondition = {
+				type: Object,
+				value: {},
+				notify: true
+			};
+		},
+		//打开编辑窗口
+		openEditDialog: function(e) {
+			var self = this;
+			var dialog = document.getElementById('category-eidt');
+			if (dialog) {
+				dialog.open();
+			}
+			dialog.addEventListener('dialog-edit', function() {
+				console.log('dialog-edit event.....');
+				dialog.close();
+			}, false);
+			self.set('editEntity', self.currentEntities[e.target.dataIdx]);
+		},
+		//打开添加窗口
+		openAddDialog: function() {
+			var self = this;
+			var dialog = document.getElementById('category-add');
+			dialog.addEventListener('dialog-add', function() {
+				console.log('dialog-add event.....');
+				dialog.close();
+			}, false);
+			if (dialog) {
+				dialog.open();
+			}
+		},
+		arrayItem: function(change, index, path) {
+			return this.get(path, change.base[index]);
+		}
+	});
+</script>
+
+<!--
+* <category-app>
+  * property: queryCondition
+  * property: pagedata
+  * property: currentEnity
+  * method: processQueryResult(pageData) { ... }
+  * method: addNew() {  var dialog = new KsDialog()；dialog.onAccept = function(){...}  dialog.onDicline=function(){... } var content = new CategoryEditForm();  dialog.show(content);   } // showElementDialog('category-edit-form')
+  
+  * form
+    * <category-input>
+    * button.queryBtn onclick="$('category-service').query(this.queryCondition).success(this.processQueryResult)">
+    * button.addNew onclick=""
+  * <category-grid data="this.data">
+    * mm-grid
+      * editButton onclick="this.editCurrent();"
+    * <ks-pagination>
+      
+      
+  * <category-service> 
+  * <ks-dialog title=".." on-accept="..." on-decline="...">  -- utility-dialog、xp-dialog
+      
+      var content = new CategoryEditForm();
+      $(dialog).show(); 
+      // 
+  * <category-edit-form entity="json object">
+    * button.saveButton onclick="$('category-service').save(enity).success()" 
+    * button.cancelButton onclick="this.fireEvent('dismiss')"
+
+* 首先开发一个框架，组件一块可以模拟化，演示出上述的概念，然后再逐步求精。
+
+	
+	
+	
+	
+-->

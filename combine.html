@@ -1,0 +1,40 @@
+<dom-module id="combine-element">
+
+	<template>
+			User Name: <input is="iron-input" bind-value="{{userName}}"><br>
+			Address: <input is="iron-input" bind-value="{{address.city}}"><br>
+			<hello-element user="{{gUserName(userName,4)}}"></hello-element>
+	</template>
+
+</dom-module>
+
+<script>
+	
+	Polymer({
+		is: 'combine-element',
+		
+		properties: {
+			userName: {
+				type: String,
+				reflectToAttribute: true
+			},
+			address:{
+				type:Object
+			}
+		},
+		
+		gUserName: function(a, b){
+			debugger;
+			return a + "," + b;
+		},
+		
+		concat: function(){
+			var buff = "";
+			for(i in arguments) buff = buff + "," + arguments[i];
+			return buff;
+		}
+		
+	})
+	
+	
+</script>

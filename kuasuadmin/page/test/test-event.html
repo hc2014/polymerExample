@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>冒泡事件</title>
+
+		<script type="text/javascript">
+			function Add(sText) {
+				document.getElementById("Console").innerHTML += sText;
+			}
+		</script>
+	</head>
+
+	<body onclick="Add('body事件触发<br />')">
+
+		<div onclick="Add('div事件触发<br />')">
+			<p onclick="Add('p事件触发<br />')" style="background:#c00;">点击</p>
+		</div>
+
+		<div id="Console" style="border:solid 1px #ee0; background:#ffc;"></div>
+	</body>
+
+</html>
